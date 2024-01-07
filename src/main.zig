@@ -1,5 +1,5 @@
 const std = @import("std");
-const day1 = @import("day1");
+const day1 = @import("./day1.zig");
 
 // modules
 const io = std.io;
@@ -28,16 +28,13 @@ pub fn main() !void {
     const allocator = gpa.allocator();
     defer _ = gpa.deinit();
 
-    try stdout.print("input file: {s}\n", .{input_path});
-
     // open file handle
     const cwd = fs.cwd();
     const input_file: File = try cwd.openFile(input_path, File.OpenFlags{});
     defer input_file.close();
 
     const file_content: []u8 = try input_file.readToEndAlloc(allocator, 640000);
+    defer allocator.free(file_content);
 
-    const buffer_reader = io.fixedBufferStream(file_content);
-
-    day1
+    try day1.solve(file_content);
 }
